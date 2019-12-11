@@ -1,0 +1,1 @@
+# bpo_sincronizar_ocr
