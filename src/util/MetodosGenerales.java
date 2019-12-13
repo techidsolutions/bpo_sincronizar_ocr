@@ -5,6 +5,7 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,23 +52,24 @@ public class MetodosGenerales {
      * @return
      */
     public static Session connectFTPbySSHGrupoBC() {
-           
-        Properties p = new Properties();
-        InputStream propertiesStream = ClassLoader.getSystemResourceAsStream("resources/configFtp.properties");
+
         JSch jsch = new JSch();
         Session session = null;
         try {
-            p.load(propertiesStream);
+            File file = new File(System.getProperty("user.dir").concat("\\config\\configFtp_OCR.properties"));
+            FileInputStream fileInputStream = new FileInputStream(file);
+            Properties mainProperties = new Properties();
+            mainProperties.load(fileInputStream);
             //buscando en el fichero de conf la llave "ipFtp"
-            String ipFtp = p.getProperty("ipFtp");
+            String ipFtp = mainProperties.getProperty("ipFtp");
             //buscando en el fichero de conf la llave "userFtp"
-            String userFtp = p.getProperty("userFtp");
+            String userFtp = mainProperties.getProperty("userFtp");
             //buscando en el fichero de conf la llave "passWdFtp"
-            String passWdFtp = p.getProperty("passWdFtp");
+            String passWdFtp = mainProperties.getProperty("passWdFtp");
             //buscando en el fichero de conf la llave "portFtp"
-            String portFtp = p.getProperty("portFtp");
+            String portFtp = mainProperties.getProperty("portFtp");
             //Cerrando el fichero
-            propertiesStream.close();
+            fileInputStream.close();
             try {
                 //session = jsch.getSession(userFtp, ipFtp);
                 session = jsch.getSession(userFtp, ipFtp, new Integer(portFtp));
@@ -92,19 +94,22 @@ public class MetodosGenerales {
         Session session = null;
         try {
 
-            Properties p = new Properties();
-            InputStream propertiesStream = ClassLoader.getSystemResourceAsStream("resources/configFtp.properties");
-            p.load(propertiesStream);
+             File file = new File(System.getProperty("user.dir").concat("\\config\\configFtp_OCR.properties"));
+            FileInputStream fileInputStream = new FileInputStream(file);
+            Properties mainProperties = new Properties();
+            mainProperties.load(fileInputStream);
             //buscando en el fichero de conf la llave "ipFtp"
-            String ipFtp = p.getProperty("ipFtp");
+            String ipFtp = mainProperties.getProperty("ipFtp");
             //buscando en el fichero de conf la llave "userFtp"
-            String userFtp = p.getProperty("userFtp");
+            String userFtp = mainProperties.getProperty("userFtp");
             //buscando en el fichero de conf la llave "passWdFtp"
-            String passWdFtp = p.getProperty("passWdFtp");
+            String passWdFtp = mainProperties.getProperty("passWdFtp");
+            //buscando en el fichero de conf la llave "portFtp"
+            String portFtp = mainProperties.getProperty("portFtp");
             //Cerrando el fichero
-            propertiesStream.close();
+            fileInputStream.close();
             JSch jsch = new JSch();
-            
+
             try {
                 session = jsch.getSession(userFtp, ipFtp);
                 session.setPassword(passWdFtp);
