@@ -66,7 +66,7 @@ public class ManipularXML {
     public void escribirArchivoNotaSimpleCaixa(String nombreArchivoXML) throws TransformerConfigurationException, TransformerException {
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
-        String ruta = "/home/adiaz/bpo/ocr/Procesados/";//Utiles.rutaProcesadosNotaSimpleCaixa;
+        String ruta = System.getProperty("user.dir").concat("\\Procesados\\").concat(nombreArchivoXML);//Utiles.rutaProcesadosNotaSimpleCaixa;
         
         File archivo = new File(ruta + nombreArchivoXML.split("\\.")[0] + ".xml");
         DOMSource source = new DOMSource(documento);
