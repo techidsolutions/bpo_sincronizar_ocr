@@ -41,7 +41,7 @@ import net.sourceforge.tess4j.TesseractException;
  * @author TECH ID SOLUTIONS
  */
 public class TimerTaskSchedule {
-    
+    private static String direccion=System.getProperty("user.dir");
     /**
      * 
      * @param asunto
@@ -92,7 +92,7 @@ public class TimerTaskSchedule {
                 else if (tipo.equals("Directorios"))
                     nombreArchivoTrazas = "registro_directorios_procesados.dat";
                 String fuente = "/home/BPO/Historico/".concat(nombreArchivoTrazas);
-                String destino = System.getProperty("user.dir").concat("\\Enviados\\").concat(nombreArchivoTrazas); 
+                String destino = direccion.concat("\\Enviados\\").concat(nombreArchivoTrazas); 
                 channelSftp.get(fuente, destino);
                 BufferedWriter bw;
                 try {
@@ -123,7 +123,7 @@ public class TimerTaskSchedule {
                 if (tipo.equals("Subidos"))
                     nombreArchivoTrazas = "trazas_subidos_GrupoBCOCR.dat";
                 String fuente = "/home/BPO/Historico/".concat(nombreArchivoTrazas);
-                String destino =  System.getProperty("user.dir").concat("\\Enviados\\").concat(nombreArchivoTrazas); 
+                String destino =  direccion.concat("\\Enviados\\").concat(nombreArchivoTrazas); 
                 channelSftp.get(fuente, destino);
                 BufferedWriter bw;
                 try {
@@ -160,7 +160,7 @@ public class TimerTaskSchedule {
      * @return 
      */
     private static Boolean existeDirectorio(ChannelSftp channelSftp, String directorio){
-        String destino = System.getProperty("user.dir").concat("\\Enviados\\").concat("registro_directorios_procesados.dat"); 
+        String destino = direccion.concat("\\Enviados\\").concat("registro_directorios_procesados.dat"); 
         String fuente = "/home/BPO/Historico/".concat("registro_directorios_procesados.dat");
          try {
              channelSftp.get(fuente, destino);
@@ -263,8 +263,8 @@ public class TimerTaskSchedule {
                                         generarTrazaOCR(channelSftpTech, archivo.getFilename(), "Descargado de GrupoBC", "Descargados");
                                     }
                                     */
-                                    channelSftpTech.put( System.getProperty("user.dir").concat("\\Enviados\\").concat(archivo.getFilename()), "/home/BPO/ConvirtiendoWS/NotaSimpleOCR/".concat(archivo.getFilename()));
-                                    channelSftpTech.put( System.getProperty("user.dir").concat("\\Enviados\\").concat(archivo.getFilename()), "/home/BPO/PendientesOCR/".concat(archivo.getFilename()));
+                                    channelSftpTech.put( direccion.concat("\\Enviados\\").concat(archivo.getFilename()), "/home/BPO/ConvirtiendoWS/NotaSimpleOCR/".concat(archivo.getFilename()));
+                                    channelSftpTech.put( direccion.concat("\\Enviados\\").concat(archivo.getFilename()), "/home/BPO/PendientesOCR/".concat(archivo.getFilename()));
                                     //channelSftpGrupoBC.put("/home/adiaz/bpo/ocr/Enviados/".concat(archivo.getFilename()), "/NotaSimple/TechId/Enviar/Procesados/".concat(archivo.getFilename()));
                                     channelSftpTech.rm(direccionRutaTechFTP.concat(archivo.getFilename()));
                                 }
@@ -279,7 +279,7 @@ public class TimerTaskSchedule {
                         
 
                         System.out.println("Inicio OCR: " + new Date());
-                        File archivos = new File( System.getProperty("user.dir").concat("\\Enviados\\"));
+                        File archivos = new File( direccion.concat("\\Enviados\\"));
                         File listaArchivos[] = archivos.listFiles();
                         ArrayList<NotaSimpleCaixa> listaNotaSimpleCaixa = new ArrayList<>();
                         try {

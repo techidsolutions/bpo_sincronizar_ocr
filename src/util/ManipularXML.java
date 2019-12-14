@@ -29,6 +29,7 @@ import org.w3c.dom.Element;
 public class ManipularXML {
 
     Document documento;
+     private static String direccion=System.getProperty("user.dir");
     
     /**
      * 
@@ -66,7 +67,7 @@ public class ManipularXML {
     public void escribirArchivoNotaSimpleCaixa(String nombreArchivoXML) throws TransformerConfigurationException, TransformerException {
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
-        String ruta = System.getProperty("user.dir").concat("\\Procesados\\").concat(nombreArchivoXML);//Utiles.rutaProcesadosNotaSimpleCaixa;
+        String ruta = direccion.concat("\\Procesados\\").concat(nombreArchivoXML);//Utiles.rutaProcesadosNotaSimpleCaixa;
         
         File archivo = new File(ruta + nombreArchivoXML.split("\\.")[0] + ".xml");
         DOMSource source = new DOMSource(documento);

@@ -23,6 +23,7 @@ import modelo.ComponenteFormulario;
 import modelo.NotaSimpleCaixa;
 
 public class MetodosGenerales {
+    private static String direccion=System.getProperty("user.dir");
 
     /**
      *
@@ -56,7 +57,7 @@ public class MetodosGenerales {
         JSch jsch = new JSch();
         Session session = null;
         try {
-            File file = new File(System.getProperty("user.dir").concat("\\conf\\configFtp_OCR.properties"));
+            File file = new File(direccion.concat("\\conf\\configFtp_OCR.properties"));
             FileInputStream fileInputStream = new FileInputStream(file);
             Properties mainProperties = new Properties();
             mainProperties.load(fileInputStream);
@@ -94,7 +95,7 @@ public class MetodosGenerales {
         Session session = null;
         try {
 
-             File file = new File(System.getProperty("user.dir").concat("\\conf\\configFtp_OCR.properties"));
+             File file = new File(direccion.concat("\\conf\\configFtp_OCR.properties"));
             FileInputStream fileInputStream = new FileInputStream(file);
             Properties mainProperties = new Properties();
             mainProperties.load(fileInputStream);
@@ -445,7 +446,7 @@ public class MetodosGenerales {
                     creador.escribirArchivoNotaSimpleCaixa(notaSimpleCaixa.getNombre());
                     try {
                         //Se envía el XML generado al FTP de Tech directorio PendientesOCR
-                        channelSftpTech.put(System.getProperty("user.dir").concat("\\Procesados\\").concat(notaSimpleCaixa.getNombre().split("\\.")[0].concat(".xml")), "/home/BPO/PendientesOCR/".concat("No").concat(notaSimpleCaixa.getNombre().split("\\.")[0].concat(".xml")));
+                        channelSftpTech.put(direccion.concat("\\Procesados\\").concat(notaSimpleCaixa.getNombre().split("\\.")[0].concat(".xml")), "/home/BPO/PendientesOCR/".concat("No").concat(notaSimpleCaixa.getNombre().split("\\.")[0].concat(".xml")));
                         
                         //Se pasa el documento PDF de EnviadosOCR a EnviadosOCRB1
                         //channelSftpTech.put("/home/adiaz/bpo/ocr/Enviados/".concat(notaSimpleCaixa.getNombre()), "/home/BPO/EnviadosOCRB1/".concat(notaSimpleCaixa.getNombre()));
@@ -453,9 +454,9 @@ public class MetodosGenerales {
                         //channelSftpTech.rm("/home/BPO/EnviadosWS/NotaSimpleOCR/".concat(notaSimpleCaixa.getNombre()));
                         //Se eliminan los archivos temporales
                         try {
-                            String[] cmdPDF = {"rm",System.getProperty("user.dir").concat("\\Enviados\\").concat(notaSimpleCaixa.getNombre())};
+                            String[] cmdPDF = {"rm",direccion.concat("\\Enviados\\").concat(notaSimpleCaixa.getNombre())};
                             Runtime.getRuntime().exec(cmdPDF);
-                            String[] cmdXML = {"rm",System.getProperty("user.dir").concat("\\Procesados\\").concat(notaSimpleCaixa.getNombre().split("\\.")[0].concat(".xml"))};
+                            String[] cmdXML = {"rm",direccion.concat("\\Procesados\\").concat(notaSimpleCaixa.getNombre().split("\\.")[0].concat(".xml"))};
                             Runtime.getRuntime().exec(cmdXML);
                         } catch (IOException ioe) {
                             System.out.println(ioe);
@@ -468,9 +469,9 @@ public class MetodosGenerales {
                 }
             } catch (ArrayIndexOutOfBoundsException e) {
                 try {
-                    channelSftpTech.put(System.getProperty("user.dir").concat("\\Enviados\\").concat(notaSimpleCaixa.getNombre()), "/home/BPO/ConvirtiendoWS/DocumentosKO/".concat(notaSimpleCaixa.getNombre()));
+                    channelSftpTech.put(direccion.concat("\\Enviados\\").concat(notaSimpleCaixa.getNombre()), "/home/BPO/ConvirtiendoWS/DocumentosKO/".concat(notaSimpleCaixa.getNombre()));
                     //channelSftpTech.rm("/home/BPO/ConvirtiendoWS/NotaSimpleOCR/".concat(notaSimpleCaixa.getNombre()));
-                    String[] cmdPDF = {"rm",System.getProperty("user.dir").concat("\\Enviados\\").concat(notaSimpleCaixa.getNombre())};
+                    String[] cmdPDF = {"rm",direccion.concat("\\Enviados\\").concat(notaSimpleCaixa.getNombre())};
                     Runtime.getRuntime().exec(cmdPDF);
                     result = result.concat(notaSimpleCaixa.getNombre() + "\n");
                     //System.out.println("Documento no procesado:" + notaSimpleCaixa.getNombre());
