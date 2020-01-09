@@ -75,7 +75,9 @@ public class MetodosGenerales {
                 //session = jsch.getSession(userFtp, ipFtp);
                 session = jsch.getSession(userFtp, ipFtp, new Integer(portFtp));
                 session.setPassword(passWdFtp);
-                session.setConfig("StrictHostKeyChecking", "no");
+                Properties properties=new Properties();
+                properties.setProperty("StrictHostKeyChecking", "no");
+                session.setConfig(properties);
                 session.connect();
             } catch (JSchException ex) {
                 System.out.println("Error:" + ex.getMessage());
@@ -114,7 +116,9 @@ public class MetodosGenerales {
             try {
                 session = jsch.getSession(userFtp, ipFtp);
                 session.setPassword(passWdFtp);
-                session.setConfig("StrictHostKeyChecking", "no");
+               Properties properties=new Properties();
+                properties.setProperty("StrictHostKeyChecking", "no");
+                session.setConfig(properties);
                 session.connect();
             } catch (JSchException ex) {
             }
