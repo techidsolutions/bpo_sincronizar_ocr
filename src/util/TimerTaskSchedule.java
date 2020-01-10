@@ -230,7 +230,8 @@ public class TimerTaskSchedule {
                                 //channelSftpGrupoBC = (ChannelSftp)sessionGrupoBC.openChannel("sftp");
                                 //channelSftpGrupoBC.connect();
                                 channelSftpTech = (ChannelSftp)sessionTech.openChannel("sftp");
-                                channelSftpTech.connect();
+                                if(channelSftpTech!=null)
+                                    channelSftpTech.connect();
                             }
                         } catch (JSchException ex) {
                             System.out.println(ex.getMessage());
@@ -243,12 +244,14 @@ public class TimerTaskSchedule {
                         
                         //channelSftpTech.put("/home/adiaz/bpo/ocr/Enviados/".concat("2018-05-1916957_000000001.pdf"), "/home/BPO/EnviadosOCR/Procesados/".concat("2018-05-1916957_000000001.pdf"));
                         //channelSftpTech.rm("/home/BPO/EnviadosOCR/".concat("2018-05-1916957_000000001.pdf"));
-                                    
-                        
-                        Vector listaArchivosPDF =  channelSftpTech.ls(direccionRutaTechFTP);
+                         Vector listaArchivosPDF=null;           
+                        if(channelSftpTech!=null)
+                            listaArchivosPDF =  channelSftpTech.ls(direccionRutaTechFTP);
                         Integer cantidadDocumentosDescargado = 0;
                         //System.out.println("Descargando archivos para OCR: FTP TECH...");
-                        if (listaArchivosPDF.size() >= 3){
+                       if(listaArchivosPDF!=null)
+                       {
+                            if (listaArchivosPDF.size() >= 3){
                             descargaDocumentos = true;
                             for (int j = 0; j < listaArchivosPDF.size(); j++) {
                                 ChannelSftp.LsEntry archivo = (ChannelSftp.LsEntry)listaArchivosPDF.elementAt(j);
@@ -270,6 +273,8 @@ public class TimerTaskSchedule {
                                 }
                             }
                         }
+                       }
+                       
                         /*
                         if (descargaDocumentos){
                             enviarCorreoNotificacion("BPO OCR:Documentos descargados", "TECH ID Solutions: Se han descargado " + cantidadDocumentosDescargado + " NOTAS SIMPLES desde Grupo BC para OCR, gracias");
@@ -360,9 +365,11 @@ public class TimerTaskSchedule {
                         */
                         //conexion.close();
                         //channelSftpGrupoBC.disconnect();
-                        channelSftpTech.disconnect();
+                        if(channelSftpTech!=null)
+                            channelSftpTech.disconnect();
                         //sessionGrupoBC.disconnect();
-                        sessionTech.disconnect();
+                        if(sessionTech!=null)
+                            sessionTech.disconnect();
                     } catch (Exception ex) { //SftpException
                         System.out.println(ex.getMessage());
                     }
