@@ -41,7 +41,7 @@ import net.sourceforge.tess4j.TesseractException;
  * @author TECH ID SOLUTIONS
  */
 public class TimerTaskSchedule {
-    
+    private static String direccion=System.getProperty("user.dir");
     /**
      * 
      * @param asunto
@@ -92,7 +92,7 @@ public class TimerTaskSchedule {
                 else if (tipo.equals("Directorios"))
                     nombreArchivoTrazas = "registro_directorios_procesados.dat";
                 String fuente = "/home/BPO/Historico/".concat(nombreArchivoTrazas);
-                String destino = "/home/adiaz/bpo/dist/Enviados/".concat(nombreArchivoTrazas); 
+                String destino = direccion.concat("/Enviados/").concat(nombreArchivoTrazas); 
                 channelSftp.get(fuente, destino);
                 BufferedWriter bw;
                 try {
@@ -123,7 +123,7 @@ public class TimerTaskSchedule {
                 if (tipo.equals("Subidos"))
                     nombreArchivoTrazas = "trazas_subidos_GrupoBCOCR.dat";
                 String fuente = "/home/BPO/Historico/".concat(nombreArchivoTrazas);
-                String destino = "/home/adiaz/bpo/ocr/Enviados/".concat(nombreArchivoTrazas); 
+                String destino =  direccion.concat("/Enviados/").concat(nombreArchivoTrazas); 
                 channelSftp.get(fuente, destino);
                 BufferedWriter bw;
                 try {
@@ -160,7 +160,7 @@ public class TimerTaskSchedule {
      * @return 
      */
     private static Boolean existeDirectorio(ChannelSftp channelSftp, String directorio){
-        String destino = "/home/adiaz/bpo/dist/Enviados/".concat("registro_directorios_procesados.dat"); 
+        String destino = direccion.concat("/Enviados/").concat("registro_directorios_procesados.dat"); 
         String fuente = "/home/BPO/Historico/".concat("registro_directorios_procesados.dat");
          try {
              channelSftp.get(fuente, destino);
@@ -230,7 +230,8 @@ public class TimerTaskSchedule {
                                 //channelSftpGrupoBC = (ChannelSftp)sessionGrupoBC.openChannel("sftp");
                                 //channelSftpGrupoBC.connect();
                                 channelSftpTech = (ChannelSftp)sessionTech.openChannel("sftp");
-                                channelSftpTech.connect();
+                                if(channelSftpTech!=null)
+                                    channelSftpTech.connect();
                             }
                         } catch (JSchException ex) {
                             System.out.println(ex.getMessage());
@@ -243,12 +244,14 @@ public class TimerTaskSchedule {
                         
                         //channelSftpTech.put("/home/adiaz/bpo/ocr/Enviados/".concat("2018-05-1916957_000000001.pdf"), "/home/BPO/EnviadosOCR/Procesados/".concat("2018-05-1916957_000000001.pdf"));
                         //channelSftpTech.rm("/home/BPO/EnviadosOCR/".concat("2018-05-1916957_000000001.pdf"));
-                                    
-                        
-                        Vector listaArchivosPDF =  channelSftpTech.ls(direccionRutaTechFTP);
+                         Vector listaArchivosPDF=null;           
+                        if(channelSftpTech!=null)
+                            listaArchivosPDF =  channelSftpTech.ls(direccionRutaTechFTP);
                         Integer cantidadDocumentosDescargado = 0;
                         //System.out.println("Descargando archivos para OCR: FTP TECH...");
-                        if (listaArchivosPDF.size() >= 3){
+                       if(listaArchivosPDF!=null)
+                       {
+                            if (listaArchivosPDF.size() >= 3){
                             descargaDocumentos = true;
                             for (int j = 0; j < listaArchivosPDF.size(); j++) {
                                 ChannelSftp.LsEntry archivo = (ChannelSftp.LsEntry)listaArchivosPDF.elementAt(j);
@@ -263,13 +266,15 @@ public class TimerTaskSchedule {
                                         generarTrazaOCR(channelSftpTech, archivo.getFilename(), "Descargado de GrupoBC", "Descargados");
                                     }
                                     */
-                                    channelSftpTech.put("/home/adiaz/bpo/ocr/Enviados/".concat(archivo.getFilename()), "/home/BPO/ConvirtiendoWS/NotaSimpleOCR/".concat(archivo.getFilename()));
-                                    channelSftpTech.put("/home/adiaz/bpo/ocr/Enviados/".concat(archivo.getFilename()), "/home/BPO/PendientesOCR/".concat(archivo.getFilename()));
+                                    channelSftpTech.put( direccion.concat("/Enviados/").concat(archivo.getFilename()), "/home/BPO/ConvirtiendoWS/NotaSimpleOCR/".concat(archivo.getFilename()));
+                                    channelSftpTech.put( direccion.concat("/Enviados/").concat(archivo.getFilename()), "/home/BPO/PendientesOCR/".concat(archivo.getFilename()));
                                     //channelSftpGrupoBC.put("/home/adiaz/bpo/ocr/Enviados/".concat(archivo.getFilename()), "/NotaSimple/TechId/Enviar/Procesados/".concat(archivo.getFilename()));
                                     channelSftpTech.rm(direccionRutaTechFTP.concat(archivo.getFilename()));
                                 }
                             }
                         }
+                       }
+                       
                         /*
                         if (descargaDocumentos){
                             enviarCorreoNotificacion("BPO OCR:Documentos descargados", "TECH ID Solutions: Se han descargado " + cantidadDocumentosDescargado + " NOTAS SIMPLES desde Grupo BC para OCR, gracias");
@@ -279,7 +284,7 @@ public class TimerTaskSchedule {
                         
 
                         System.out.println("Inicio OCR: " + new Date());
-                        File archivos = new File("/home/adiaz/bpo/ocr/Enviados/");
+                        File archivos = new File( direccion.concat("/Enviados/"));
                         File listaArchivos[] = archivos.listFiles();
                         ArrayList<NotaSimpleCaixa> listaNotaSimpleCaixa = new ArrayList<>();
                         try {
@@ -360,9 +365,11 @@ public class TimerTaskSchedule {
                         */
                         //conexion.close();
                         //channelSftpGrupoBC.disconnect();
-                        channelSftpTech.disconnect();
+                        if(channelSftpTech!=null)
+                            channelSftpTech.disconnect();
                         //sessionGrupoBC.disconnect();
-                        sessionTech.disconnect();
+                        if(sessionTech!=null)
+                            sessionTech.disconnect();
                     } catch (Exception ex) { //SftpException
                         System.out.println(ex.getMessage());
                     }
