@@ -225,6 +225,7 @@ public class TimerTaskSchedule {
                         
                         //ChannelSftp channelSftpGrupoBC = null;
                         ChannelSftp channelSftpTech = null;
+                   
                         try {
                             if (sessionTech != null && sessionTech.isConnected()) {
                                 //channelSftpGrupoBC = (ChannelSftp)sessionGrupoBC.openChannel("sftp");

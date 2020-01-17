@@ -94,21 +94,24 @@ public class MetodosGenerales {
      * @return
      */
     public static Session connectFTPbySSHTech() {
+          /* Cargando fichero de configuracion para la conexion al Ftp*/
+
         Session session = null;
         try {
-
-             File file = new File(direccion.concat("/conf/configFtp_OCR.properties"));
+            File file = new File(direccion.concat("/conf/configFtp_OCR.properties"));
             FileInputStream fileInputStream = new FileInputStream(file);
             Properties mainProperties = new Properties();
             mainProperties.load(fileInputStream);
             //buscando en el fichero de conf la llave "ipFtp"
-            String ipFtp = mainProperties.getProperty("ipFtp");
+           String ipFtp = mainProperties.getProperty("ipFtp");
+           
             //buscando en el fichero de conf la llave "userFtp"
-            String userFtp = mainProperties.getProperty("userFtp");
+           String userFtp = mainProperties.getProperty("userFtp");
+       
             //buscando en el fichero de conf la llave "passWdFtp"
-            String passWdFtp = mainProperties.getProperty("passWdFtp");
-            //buscando en el fichero de conf la llave "portFtp"
-            String portFtp = mainProperties.getProperty("portFtp");
+           String passWdFtp = mainProperties.getProperty("passWdFtp");
+           //buscando en el fichero de conf la llave "portFtp"
+           String portFtp =mainProperties.getProperty("portFtp");
             //Cerrando el fichero
             fileInputStream.close();
             JSch jsch = new JSch();
@@ -116,15 +119,15 @@ public class MetodosGenerales {
             try {
                 session = jsch.getSession(userFtp, ipFtp, new Integer(portFtp));
                 session.setPassword(passWdFtp);
-               Properties properties=new Properties();
-                properties.setProperty("StrictHostKeyChecking", "no");
-                session.setConfig(properties);
+
+                session.setConfig("StrictHostKeyChecking", "no");
                 session.connect();
-            } catch (JSchException ex) {
+            } catch (Exception ex) {
+                String o = ex.toString();
             }
             return session;
-        } catch (IOException ex) {
-            Logger.getLogger(MetodosGenerales.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return session;
     }
