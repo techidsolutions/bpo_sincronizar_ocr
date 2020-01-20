@@ -460,7 +460,7 @@ public class MetodosGenerales {
                         //channelSftpTech.put("/home/adiaz/bpo/ocr/Enviados/".concat(notaSimpleCaixa.getNombre()), "/home/BPO/ConvirtiendoWS/NotaSimpleOCR/".concat(notaSimpleCaixa.getNombre()));
                         //channelSftpTech.rm("/home/BPO/EnviadosWS/NotaSimpleOCR/".concat(notaSimpleCaixa.getNombre()));
                         //Se eliminan los archivos temporales
-                        try {
+                        try {                      
                             String[] cmdPDF = {"rm",direccion.concat("/Enviados/").concat(notaSimpleCaixa.getNombre())};
                             Runtime.getRuntime().exec(cmdPDF);
                             String[] cmdXML = {"rm",direccion.concat("/Procesados/").concat(notaSimpleCaixa.getNombre().split("\\.")[0].concat(".xml"))};
