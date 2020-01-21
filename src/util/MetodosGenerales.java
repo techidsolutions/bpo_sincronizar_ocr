@@ -178,7 +178,7 @@ public class MetodosGenerales {
             try {
 
                 listaComponentesXML = new ArrayList<>();
-                listaComponentesXML.add(new ComponenteFormulario("ID_DOCUMENTO", notaSimpleCaixa.getNombre().split("\\.")[0]));
+                listaComponentesXML.add(new ComponenteFormulario("ID_DOCUMENTO", notaSimpleCaixa.getNombre().split("/.")[0]));
                 String descripcion = "DESCRIPCION";
                 String datosResgistrales[] = notaSimpleCaixa.getTexto().split(descripcion, 2);
                 if (datosResgistrales.length < 2) {
