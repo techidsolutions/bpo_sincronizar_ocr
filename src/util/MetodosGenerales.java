@@ -119,8 +119,9 @@ public class MetodosGenerales {
             try {
                 session = jsch.getSession(userFtp, ipFtp, new Integer(portFtp));
                 session.setPassword(passWdFtp);
-
-                session.setConfig("StrictHostKeyChecking", "no");
+                Properties properties=new Properties();
+                properties.setProperty("StrictHostKeyChecking","no");
+                session.setConfig(properties);
                 session.connect();
             } catch (Exception ex) {
                 String o = ex.toString();
