@@ -471,6 +471,20 @@ public class MetodosGenerales {
                         }
                     } catch (SftpException ex) {
                         Logger.getLogger(MetodosGenerales.class.getName()).log(Level.SEVERE, null, ex);
+                    try
+                    {
+                    
+                    channelSftpTech.put(direccion.concat("/Enviados/").concat(notaSimpleCaixa.getNombre()), "/home/BPO/ConvirtiendoWS/DocumentosKO/".concat(notaSimpleCaixa.getNombre()));
+                    //channelSftpTech.rm("/home/BPO/ConvirtiendoWS/NotaSimpleOCR/".concat(notaSimpleCaixa.getNombre()));
+                    String[] cmdPDF = {"rm",direccion.concat("/Enviados/").concat(notaSimpleCaixa.getNombre())};
+                    Runtime.getRuntime().exec(cmdPDF);
+                    result = result.concat(notaSimpleCaixa.getNombre() + "\n");
+                    //System.out.println("Documento no procesado:" + notaSimpleCaixa.getNombre());
+                    TimerTaskSchedule.enviarCorreoNotificacion("BPO OCR:DOCUMENTOS NO PROCESADO", "TECH ID Solutions: al siguiente documento no se ha podido aplicar el OCR:" + notaSimpleCaixa.getNombre() + "\n" + "--------------------TEXTO DEL DOCUMENTO NO PROCESADO--------------------" + "\n\n" + notaSimpleCaixa.getTexto());
+                    }catch(Exception ex1)
+                    {
+                        System.out.println(ex1.getMessage());
+                    }
                     }
                 } catch (ParserConfigurationException | TransformerException ex) {
                     System.out.println(ex.getMessage());
