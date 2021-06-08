@@ -63,6 +63,7 @@ public class TimerTaskSchedule {
             Properties mainProperties = new Properties();
             mainProperties.load(fileInputStream);
             String correo = mainProperties.getProperty("correo");
+            fileInputStream.close();
             ArrayList<String> correoitems = new ArrayList<String>(Arrays.asList(correo.split(",")));
 
             try {
