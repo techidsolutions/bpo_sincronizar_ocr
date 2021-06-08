@@ -9,16 +9,20 @@ import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
+
 import datos.DatosDocumento;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.Timer;
@@ -29,6 +33,7 @@ import java.util.logging.Logger;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Transport;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import modelo.NotaSimpleCaixa;
@@ -50,32 +55,51 @@ public class TimerTaskSchedule {
      * @param texto
      */
     public static void enviarCorreoNotificacion(String asunto, String texto) {
-        try {
-            Properties props = new Properties();
-            props.setProperty("mail.smtp.host", "smtp.gmail.com");
-            props.setProperty("mail.smtp.starttls.enable", "true");
-            props.setProperty("mail.smtp.port", "587");
-            props.setProperty("mail.smtp.user", "techidbpo@gmail.com");
-            props.setProperty("mail.smtp.auth", "true");
-            props.put("mail.smtp.ssl.trust", "smtp.gmail.com");
-            javax.mail.Session session = javax.mail.Session.getDefaultInstance(props);
-            MimeMessage message = new MimeMessage(session);
-            message.setFrom(new InternetAddress("techidbpo@gmail.com"));
-            InternetAddress listaDirecciones[] = new InternetAddress[4];
-            listaDirecciones[0] = new InternetAddress("bpo@tidinternationalgroup.com");
-            listaDirecciones[1] = new InternetAddress("angel.diaz@tidinternationalgroup.com");
-            listaDirecciones[2] = new InternetAddress("josepineroe@gmail.com");
-            listaDirecciones[3] = new InternetAddress("japestrada@nauta.cu");
-            message.addRecipients(Message.RecipientType.TO, listaDirecciones);
-            message.setSubject(asunto);
-            message.setText(texto);
-            Transport t = session.getTransport("smtp");
-            t.connect("techidbpo@gmail.com", "t3ch1dbp0");
-            t.sendMessage(message, message.getAllRecipients());
-            t.close();
-        } catch (MessagingException ex) {
 
+        try {
+            File file = new File(direccion.concat("/conf/configFtp_OCR.properties"));
+            FileInputStream fileInputStream;
+            fileInputStream = new FileInputStream(file);
+            Properties mainProperties = new Properties();
+            mainProperties.load(fileInputStream);
+            String correo = mainProperties.getProperty("correo");
+            ArrayList<String> correoitems = new ArrayList<String>(Arrays.asList(correo.split(",")));
+
+            try {
+                Properties props = new Properties();
+                props.setProperty("mail.smtp.host", "smtp.gmail.com");
+                props.setProperty("mail.smtp.starttls.enable", "true");
+                props.setProperty("mail.smtp.port", "587");
+                props.setProperty("mail.smtp.user", "techidbpo@gmail.com");
+                props.setProperty("mail.smtp.auth", "true");
+                props.put("mail.smtp.ssl.trust", "smtp.gmail.com");
+                javax.mail.Session session = javax.mail.Session.getDefaultInstance(props);
+                MimeMessage message = new MimeMessage(session);
+                message.setFrom(new InternetAddress("techidbpo@gmail.com"));
+                InternetAddress listaDirecciones[] = new InternetAddress[correoitems.size()];
+                for (int i = 0; i < correoitems.size(); i++) {
+                    listaDirecciones[i] = new InternetAddress(correoitems.get(i));
+                }
+                if (listaDirecciones != null) {
+                    message.addRecipients(Message.RecipientType.TO, listaDirecciones);
+                    message.setSubject(asunto);
+                    message.setText(texto);
+                    Transport t = session.getTransport("smtp");
+                    t.connect("techidbpo@gmail.com", "t3ch1dbp0");
+                    t.sendMessage(message, message.getAllRecipients());
+                    t.close();
+                }
+            } catch (MessagingException ex) {
+                Logger.getLogger(TimerTaskSchedule.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(TimerTaskSchedule.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+            //listaDirecciones[0] = new InternetAddress("bpo@tidinternationalgroup.com");
+        // listaDirecciones[1] = new InternetAddress("angel.diaz@tidinternationalgroup.com");
+        // listaDirecciones[2] = new InternetAddress("josepineroe@gmail.com");
+        // listaDirecciones[3] = new InternetAddress("japestrada@nauta.cu");
     }
 
     /**
@@ -223,7 +247,7 @@ public class TimerTaskSchedule {
             @Override
             public void run() {
                 try {
-                        //Connection conexion = SincronizarRepoGrupoBC.NuevaConexion();
+                    //Connection conexion = SincronizarRepoGrupoBC.NuevaConexion();
                     //Session sessionGrupoBC = MetodosGenerales.connectFTPbySSHGrupoBC();
                     Session sessionTech = MetodosGenerales.connectFTPbySSHTech();
 
@@ -232,7 +256,7 @@ public class TimerTaskSchedule {
 
                     try {
                         if (sessionTech != null && sessionTech.isConnected()) {
-                                //channelSftpGrupoBC = (ChannelSftp)sessionGrupoBC.openChannel("sftp");
+                            //channelSftpGrupoBC = (ChannelSftp)sessionGrupoBC.openChannel("sftp");
                             //channelSftpGrupoBC.connect();
                             channelSftpTech = (ChannelSftp) sessionTech.openChannel("sftp");
                             if (channelSftpTech != null) {
@@ -248,7 +272,7 @@ public class TimerTaskSchedule {
                     String direccionRutaTechFTP = "/home/BPO/EnviadosWS/NotaSimpleOCR/";
                     String directorioTemp = "Enviados/";
 
-                        //channelSftpTech.put("/home/adiaz/bpo/ocr/Enviados/".concat("2018-05-1916957_000000001.pdf"), "/home/BPO/EnviadosOCR/Procesados/".concat("2018-05-1916957_000000001.pdf"));
+                    //channelSftpTech.put("/home/adiaz/bpo/ocr/Enviados/".concat("2018-05-1916957_000000001.pdf"), "/home/BPO/EnviadosOCR/Procesados/".concat("2018-05-1916957_000000001.pdf"));
                     //channelSftpTech.rm("/home/BPO/EnviadosOCR/".concat("2018-05-1916957_000000001.pdf"));
                     Vector listaArchivosPDF = null;
                     if (channelSftpTech != null) {
@@ -286,7 +310,7 @@ public class TimerTaskSchedule {
                      enviarCorreoNotificacion("BPO OCR:Documentos descargados", "TECH ID Solutions: Se han descargado " + cantidadDocumentosDescargado + " NOTAS SIMPLES desde Grupo BC para OCR, gracias");
                      }
                      */
-                       // System.out.println("Descarga finalizada:" + new Date().toString());
+                    // System.out.println("Descarga finalizada:" + new Date().toString());
                     System.out.println("Inicio OCR: " + new Date());
                     File archivos = new File(direccion.concat("/Enviados/"));
                     File listaArchivos[] = archivos.listFiles();
@@ -371,7 +395,7 @@ public class TimerTaskSchedule {
                      }
                      System.out.println("Subida finalizada:" + new Date().toString());
                      */
-                        //conexion.close();
+                    //conexion.close();
                     //channelSftpGrupoBC.disconnect();
                     if (channelSftpTech != null) {
                         channelSftpTech.disconnect();
@@ -386,7 +410,7 @@ public class TimerTaskSchedule {
 
             }
         };
-         // Comienza dentro de 0ms y luego lanzamos la tarea cada 1000ms   60000
+        // Comienza dentro de 0ms y luego lanzamos la tarea cada 1000ms   60000
         // timer.schedule(task, 1000, 3600000); cada una hora
         //timer.schedule(task, 1000, 600000); //Cada 10 minutos
         timer.schedule(task, 1000, 1800000); //Cada 30 minutos
