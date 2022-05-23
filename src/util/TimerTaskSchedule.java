@@ -323,7 +323,7 @@ public class TimerTaskSchedule {
                             for (File archivo : listaArchivos) {
                                 String text = iTesseract.doOCR(archivo);
                                 text = MetodosGenerales.limpiarTexto(text);
-                                text = text.replaceAll("&", "&amp;");
+                                text = text.replaceAll("&", "");
                                 listaNotaSimpleCaixa.add(new NotaSimpleCaixa(text, archivo.getName()));
                                 //System.out.println("Procesado:     " + archivo.getName());
                             }
