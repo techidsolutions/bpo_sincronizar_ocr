@@ -19,6 +19,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import modelo.ComponenteFormulario;
+import modelo.NotaSimpleCaixa;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -64,34 +65,100 @@ public class ManipularXML {
      * @throws TransformerConfigurationException
      * @throws TransformerException 
      */
-    public void escribirArchivoNotaSimpleCaixa(String nombreArchivoXML) throws TransformerConfigurationException, TransformerException {
+    public void escribirArchivoNotaSimpleCaixa(String nombreArchivoXML, boolean procesado) throws TransformerConfigurationException, TransformerException {
+        
         TransformerFactory transformerFactory = TransformerFactory.newInstance();
         Transformer transformer = transformerFactory.newTransformer();
-        String ruta = direccion.concat("/Procesados/").concat(nombreArchivoXML.split("\\.")[0]);//Utiles.rutaProcesadosNotaSimpleCaixa;
+        String ruta = "";
+        if(procesado){
+            ruta = direccion.concat("/Procesados/").concat(nombreArchivoXML.split("\\.")[0]);//Utiles.rutaProcesadosNotaSimpleCaixa;
+        }else{
+            ruta = direccion.concat("/No_procesados/").concat(nombreArchivoXML.split("\\.")[0]);
+        }
         File archivo = new File(ruta +".xml");
+        
         DOMSource source = new DOMSource(documento);
+        
         StreamResult result = new StreamResult(archivo);
+        
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         transformer.setOutputProperty(OutputKeys.STANDALONE, "no");
         transformer.setOutputProperty(OutputKeys.METHOD, "xml");
         transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
+        
         //transformer.setOutputProperty(OutputKeys.DOCTYPE_SYSTEM,"xhtml1-strict.dtd");
         transformer.transform(source, result);
+        
     }
     
     /**
      * 
      * @param listaComponentesXML 
      */
-    public void crearDocumentoNotaSimpleCaixa(ArrayList<ComponenteFormulario> listaComponentesXML) {
+    public void crearDocumentoNotaSimpleCaixa(ArrayList<ComponenteFormulario> listaComponentesXML, boolean procesado) {
+        
         Element raiz;
         Element elementoTemporal;
+        Element DatosRegistrales;
+        Element DescripicionFinca;
+        Element Titulares;
+        Element Cargas;
+        Element Asientospendientes;
+        
         raiz = documento.createElement("OcrResultNotaSimple");
+        
         documento.appendChild(raiz);
+        
         for (ComponenteFormulario componenteFormulario: listaComponentesXML){
+            
             elementoTemporal = documento.createElement(componenteFormulario.getNombre());
             elementoTemporal.setTextContent(componenteFormulario.getValor());
             raiz.appendChild(elementoTemporal);
         }
-    }  
+        if(!procesado){
+            DatosRegistrales = documento.createElement("DATOS_REGISTRALES");
+            DatosRegistrales.appendChild(documento.createTextNode("DATOS_REGISTRALES"));
+            raiz.appendChild(DatosRegistrales);
+
+            DescripicionFinca = documento.createElement("DESCRIPCION_FINCA");
+            DescripicionFinca.appendChild(documento.createTextNode("DESCRIPCION_FINCA"));
+            raiz.appendChild(DescripicionFinca);
+
+            Titulares = documento.createElement("TITULARES");
+            Titulares.appendChild(documento.createTextNode("TITULARES"));
+            raiz.appendChild(Titulares); 
+
+            Cargas = documento.createElement("CARGAS");
+            Cargas.appendChild(documento.createTextNode("CARGAS"));
+            raiz.appendChild(Cargas);
+
+            Asientospendientes = documento.createElement("ASIENTOS_PENDIENTES");
+            Asientospendientes.appendChild(documento.createTextNode("ASIENTOS_PENDIENTES"));
+            raiz.appendChild(Asientospendientes);
+        }
+    }
+    
+    /**
+     *
+     * @param notaSimpleCaixa
+     */
+//    public void crearDocumentoNotaSimpleCaixaNoGenerado(ArrayList<ComponenteFormulario> listaComponentesXML) {
+//        System.out.println("Entró a crear Documento NotaSimpleCaixa NoGenerado");
+//        Element raiz;
+//        Element elementoTemporal;
+//        raiz = documento.createElement("OcrResultNotaSimple");
+//        documento.appendChild(raiz);
+////        elementoTemporal = documento.createElement(notaSimpleCaixa.getNombre());
+////        elementoTemporal.setTextContent(notaSimpleCaixa.getTexto());
+////        raiz.appendChild(elementoTemporal);
+//                
+//        for (ComponenteFormulario componenteFormulario: listaComponentesXML){
+//            
+//            elementoTemporal = documento.createElement(componenteFormulario.getNombre());
+//            elementoTemporal.setTextContent(componenteFormulario.getValor());
+//            raiz.appendChild(elementoTemporal);
+//        }
+//        
+//    } 
 }
+

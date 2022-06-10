@@ -74,6 +74,8 @@ public class TimerTaskSchedule {
                 props.setProperty("mail.smtp.user", "techidbpo@gmail.com");
                 props.setProperty("mail.smtp.auth", "true");
                 props.put("mail.smtp.ssl.trust", "smtp.gmail.com");
+                props.put("mail.smtp.starttls.required", "true");
+                props.put("mail.smtp.ssl.protocols", "TLSv1.2");
                 javax.mail.Session session = javax.mail.Session.getDefaultInstance(props);
                 MimeMessage message = new MimeMessage(session);
                 message.setFrom(new InternetAddress("techidbpo@gmail.com"));
@@ -92,6 +94,7 @@ public class TimerTaskSchedule {
                 }
             } catch (MessagingException ex) {
                 Logger.getLogger(TimerTaskSchedule.class.getName()).log(Level.SEVERE, null, ex);
+                System.out.println("Error de envío de correo" + ex.getMessage());
             }
         } catch (IOException ex) {
             Logger.getLogger(TimerTaskSchedule.class.getName()).log(Level.SEVERE, null, ex);
@@ -332,14 +335,17 @@ public class TimerTaskSchedule {
                     } catch (TesseractException ex) {
                         System.out.println(ex.getMessage());
                     }
-                    String result = MetodosGenerales.generarXMLNotaSimpleCaixa(listaNotaSimpleCaixa, channelSftpTech);
+                    ArrayList<String> result = MetodosGenerales.generarXMLNotaSimpleCaixa(listaNotaSimpleCaixa, channelSftpTech);
+                    System.out.println("Result" + result);
                     /*
                      if (!result.equals("Documentos no procesados:\n"))
                      System.out.println(result);
                      */
                     System.out.println("Fin OCR: " + new Date());
-                    if (listaNotaSimpleCaixa.size() > 0) {
-                        enviarCorreoNotificacion("BPO OCR:OCR TERMINADO - DOCS PENDIENTES DE REVISION", "TECH ID Solutions: existen documentos pendientes de revisión.");
+                    if (listaNotaSimpleCaixa.size() > 0 & result.size() > 0) {
+                        enviarCorreoNotificacion("BPO OCR:OCR TERMINADO - DOCS PENDIENTES DE REVISION", "TECH ID Solutions: existen documentos pendientes de revisión.\n" + "A los siguientes documentos no se ha podido aplicar correctamente el OCR:\n" + result);
+                    }else if(listaNotaSimpleCaixa.size() > 0 & result.isEmpty()){
+                        enviarCorreoNotificacion("BPO OCR:OCR TERMINADO - DOCS PENDIENTES DE REVISION", "TECH ID Solutions: existen documentos pendientes de revisión.\n");
                     }
 
                         //Subir archivos
