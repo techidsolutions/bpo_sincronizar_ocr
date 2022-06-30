@@ -67,18 +67,31 @@ public class TimerTaskSchedule {
             ArrayList<String> correoitems = new ArrayList<String>(Arrays.asList(correo.split(",")));
 
             try {
+//                Properties props = new Properties();
+//                props.setProperty("mail.smtp.host", "smtp.gmail.com");
+//                props.setProperty("mail.smtp.starttls.enable", "true");
+//                props.setProperty("mail.smtp.port", "587");
+//                props.setProperty("mail.smtp.user", "techidbpo@gmail.com");
+//                props.setProperty("mail.smtp.auth", "true");
+//                props.put("mail.smtp.ssl.trust", "smtp.gmail.com");
+//                props.put("mail.smtp.starttls.required", "true");
+//                props.put("mail.smtp.ssl.protocols", "TLSv1.2");
+//                javax.mail.Session session = javax.mail.Session.getDefaultInstance(props);
+//                MimeMessage message = new MimeMessage(session);
+//                message.setFrom(new InternetAddress("techidbpo@gmail.com"));
+
                 Properties props = new Properties();
-                props.setProperty("mail.smtp.host", "smtp.gmail.com");
+                props.setProperty("mail.smtp.host", "hm667.neodigit.net");
                 props.setProperty("mail.smtp.starttls.enable", "true");
                 props.setProperty("mail.smtp.port", "587");
-                props.setProperty("mail.smtp.user", "techidbpo@gmail.com");
+                props.setProperty("mail.smtp.user", "bpo.bot@tidinternationalgroup.com");
                 props.setProperty("mail.smtp.auth", "true");
                 props.put("mail.smtp.ssl.trust", "smtp.gmail.com");
                 props.put("mail.smtp.starttls.required", "true");
                 props.put("mail.smtp.ssl.protocols", "TLSv1.2");
                 javax.mail.Session session = javax.mail.Session.getDefaultInstance(props);
                 MimeMessage message = new MimeMessage(session);
-                message.setFrom(new InternetAddress("techidbpo@gmail.com"));
+                message.setFrom(new InternetAddress("bpo.bot@tidinternationalgroup.com"));
                 InternetAddress listaDirecciones[] = new InternetAddress[correoitems.size()];
                 for (int i = 0; i < correoitems.size(); i++) {
                     listaDirecciones[i] = new InternetAddress(correoitems.get(i));
@@ -88,19 +101,26 @@ public class TimerTaskSchedule {
                     message.setSubject(asunto);
                     message.setText(texto);
                     Transport t = session.getTransport("smtp");
-                    t.connect("techidbpo@gmail.com", "t3ch1dbp0");
-                    t.sendMessage(message, message.getAllRecipients());
+//                    t.connect("techidbpo@gmail.com", "t3ch1dbp0");
+                    t.connect("bpo.bot@tidinternationalgroup.com", "ZLtue46=s&#P6I@Pq8F");
+                    try {
+                        t.sendMessage(message, message.getAllRecipients());
+                    } catch (Exception ex) {
+                        Logger.getLogger(TimerTaskSchedule.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
+                    }
                     t.close();
                 }
             } catch (MessagingException ex) {
                 Logger.getLogger(TimerTaskSchedule.class.getName()).log(Level.SEVERE, null, ex);
                 System.out.println("Error de envío de correo" + ex.getMessage());
+            } catch (Exception ex) {
+                Logger.getLogger(TimerTaskSchedule.class.getName()).log(Level.SEVERE, ex.getMessage(), ex);
             }
         } catch (IOException ex) {
             Logger.getLogger(TimerTaskSchedule.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-            //listaDirecciones[0] = new InternetAddress("bpo@tidinternationalgroup.com");
+        //listaDirecciones[0] = new InternetAddress("bpo@tidinternationalgroup.com");
         // listaDirecciones[1] = new InternetAddress("angel.diaz@tidinternationalgroup.com");
         // listaDirecciones[2] = new InternetAddress("josepineroe@gmail.com");
         // listaDirecciones[3] = new InternetAddress("japestrada@nauta.cu");
@@ -316,24 +336,34 @@ public class TimerTaskSchedule {
                      */
                     // System.out.println("Descarga finalizada:" + new Date().toString());
                     System.out.println("Inicio OCR: " + new Date());
-                    File archivos = new File(direccion.concat("/Enviados/"));
+                    File archivos = new File("/home/BPO/EnviadosWS/NotaSimpleOCR");
+//                    File archivos = new File("/Users/naylencuaje/Downloads/notas_simples_pdf");
                     File listaArchivos[] = archivos.listFiles();
                     ArrayList<NotaSimpleCaixa> listaNotaSimpleCaixa = new ArrayList<>();
+
                     try {
                         ITesseract iTesseract = new Tesseract();
                         iTesseract.setLanguage("spa");
+                        iTesseract.setDatapath(direccion.concat("/tessdata"));
+
                         if (listaArchivos != null && listaArchivos.length > 0) {
+                            System.out.println("Lista de archivos.length " + listaArchivos.length);
+
                             for (File archivo : listaArchivos) {
+//                                if(!".DS_Store".equals(archivo.getName())){
+//                                System.out.println("archivo.getname" + archivo.getName());
                                 String text = iTesseract.doOCR(archivo);
-                                text = MetodosGenerales.limpiarTexto(text);
+//                                text = text.replaceAll("&", "&amp;");
                                 text = text.replaceAll("&", "");
                                 listaNotaSimpleCaixa.add(new NotaSimpleCaixa(text, archivo.getName()));
-                                //System.out.println("Procesado:     " + archivo.getName());
+                                System.out.println("Procesado: " + archivo.getName());
+
+//                            }
                             }
                         }
 
                     } catch (TesseractException ex) {
-                        System.out.println(ex.getMessage());
+                        System.out.println("Tesseract Exception" + ex.getMessage());
                     }
                     ArrayList<String> result = MetodosGenerales.generarXMLNotaSimpleCaixa(listaNotaSimpleCaixa, channelSftpTech);
                     System.out.println("Result" + result);
@@ -344,7 +374,7 @@ public class TimerTaskSchedule {
                     System.out.println("Fin OCR: " + new Date());
                     if (listaNotaSimpleCaixa.size() > 0 & result.size() > 0) {
                         enviarCorreoNotificacion("BPO OCR:OCR TERMINADO - DOCS PENDIENTES DE REVISION", "TECH ID Solutions: existen documentos pendientes de revisión.\n" + "A los siguientes documentos no se ha podido aplicar correctamente el OCR:\n" + result);
-                    }else if(listaNotaSimpleCaixa.size() > 0 & result.isEmpty()){
+                    } else if (listaNotaSimpleCaixa.size() > 0 & result.isEmpty()) {
                         enviarCorreoNotificacion("BPO OCR:OCR TERMINADO - DOCS PENDIENTES DE REVISION", "TECH ID Solutions: existen documentos pendientes de revisión.\n");
                     }
 
