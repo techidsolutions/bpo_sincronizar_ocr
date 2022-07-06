@@ -82,12 +82,12 @@ public class TimerTaskSchedule {
 
                 Properties props = new Properties();
                 props.setProperty("mail.smtp.host", "hm667.neodigit.net");
-                props.setProperty("mail.smtp.starttls.enable", "true");
+                props.setProperty("mail.smtp.starttls.enable", "false");
                 props.setProperty("mail.smtp.port", "587");
                 props.setProperty("mail.smtp.user", "bpo.bot@tidinternationalgroup.com");
                 props.setProperty("mail.smtp.auth", "true");
-                props.put("mail.smtp.ssl.trust", "smtp.gmail.com");
-                props.put("mail.smtp.starttls.required", "true");
+                props.put("mail.smtp.ssl.trust", "hm667.neodigit.net");
+                props.put("mail.smtp.starttls.required", "false");
                 props.put("mail.smtp.ssl.protocols", "TLSv1.2");
                 javax.mail.Session session = javax.mail.Session.getDefaultInstance(props);
                 MimeMessage message = new MimeMessage(session);
